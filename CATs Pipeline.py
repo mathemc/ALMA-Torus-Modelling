@@ -5,7 +5,7 @@ from casatasks import uvcontsub, split, mstransform, concat, tclean
 
 print('')
 print('# ========================================= #')
-print('  Starting CATs code (CASA Automated Tasks)  ')
+print('  Starting CATs (CASA Automated Tasks) v1.2  ')
 print('                                             ')
 print('             |\---/|                         ')
 print('             | ,_, |                         ')
@@ -51,7 +51,6 @@ threshold_val   = '0.0mJy'
 # Altere para True caso queira deletar os arquivos .ms intermediários ao final
 del_file = True 
 
-
 # ==============================================================================
 # ===== 2. RUNNING UVCONTSUB ===== #
 # ==============================================================================
@@ -61,7 +60,7 @@ print('# =================================== #')
 
 contsub_files = []
 for i, vis_file in enumerate(input_files, start=1):
-    print(f"\n[ {i}/{len(input_files)} ] Processando contsub em: {vis_file}")
+    print(f"\n[ {i}/{len(input_files)} ] Processing contsub: {vis_file}")
     contsub_name = f"{field_id}_obs{i}_{emission_line}_csub.ms"
     contsub_files.append(contsub_name)
     
@@ -84,7 +83,7 @@ print('# =================================== #')
 
 split_files = []
 for i, contsub_file in enumerate(contsub_files, start=1):
-    print(f"\n[ {i}/{len(contsub_files)} ] Recortando: {contsub_file}")
+    print(f"\n[ {i}/{len(contsub_files)} ] Spliting: {contsub_file}")
     split_name = f"{field_id}_obs{i}_{emission_line}_split_v1.ms"
     split_files.append(split_name)
     
@@ -107,7 +106,7 @@ print('# =================================== #')
 
 mst_files = []
 for i, split_file in enumerate(split_files, start=1):
-    print(f"\n[ {i}/{len(split_files)} ] Aplicando mstransform em: {split_file}")
+    print(f"\n[ {i}/{len(split_files)} ] Applying mstransform: {split_file}")
     mst_name = f"{field_id}_obs{i}_{emission_line}_mst_v1.ms"
     mst_files.append(mst_name)
     
@@ -134,7 +133,7 @@ concat_name = f"{field_id}_{emission_line}_concat.ms"
 if os.path.exists(concat_name):
     shutil.rmtree(concat_name)
 
-print(f"--> Gerando arquivo unificado em: {concat_name}")
+print(f"--> Generating unified file: {concat_name}")
 concat(
     vis=mst_files, 
     concatvis=concat_name, 
@@ -157,7 +156,7 @@ if os.path.exists(f"{image_prefix}.image"):
     print(f"--> Removendo imagens anteriores com o prefixo: {image_prefix}")
     os.system(f"rm -rf {image_prefix}.*")
 
-print(f"--> Iniciando tclean usando o arquivo concatenado: {concat_name}")
+print(f"--> Starting TCLEAN task with the concat file: {concat_name}")
 tclean(
     vis=concat_name, 
     imagename=image_prefix,
@@ -192,14 +191,14 @@ if del_file:
     removed_count = 0
     for ms_path in all_intermediates:
         if os.path.exists(ms_path):
-            print(f"--> Removendo: {ms_path}")
+            print(f"--> Removing: {ms_path}")
             shutil.rmtree(ms_path)
             removed_count += 1
             
-    print(f"\n>> Limpeza concluída: {removed_count} arquivos/diretórios MS removidos.")
+    print(f"\n>> Cleaning task concluded: {removed_count} files/directories were removed.")
 else:
-    print("\n>> Flag 'del_file' é False. Todos os arquivos MS intermediários foram mantidos.")
+    print("\n>> Flag 'del_file' is False. All the files were kept.")
 
 print('\n# ================================================== #')
-print('  CAT CODE FINALIZADO COM SUCESSO! CUBOS GERADOS.   ')
+print('  CAT CODE FINISHED WITH SUCCESS! FINAL DATACUBES GENERATED.   ')
 print('# ================================================== #\n')
